@@ -1,0 +1,28 @@
+{
+  "generatedNote": "Data baked 2026-06-12 · 1960–2022",
+  "yearMin": 1960,
+  "yearMax": 2022,
+  "bordersNote": "Borders shown: present day — they don’t change with the year yet.",
+  "sources": [
+    {
+      "name": "Natural Earth (admin-0 boundaries)",
+      "license": "Public domain",
+      "url": "https://www.naturalearthdata.com/"
+    },
+    {
+      "name": "Our World in Data — Population",
+      "license": "CC BY",
+      "url": "https://ourworldindata.org/population-growth"
+    },
+    {
+      "name": "Our World in Data — Energy",
+      "license": "CC BY",
+      "url": "https://github.com/owid/energy-data"
+    },
+    {
+      "name": "World Bank — World Development Indicators",
+      "license": "CC BY-4.0",
+      "url": "https://data.worldbank.org/"
+    }
+  ]
+}

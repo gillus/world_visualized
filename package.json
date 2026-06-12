@@ -1,0 +1,34 @@
+{
+  "name": "the-world-visualized",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The World, Visualized — an educational world atlas with a time machine.",
+  "scripts": {
+    "dev": "vite",
+    "build": "svelte-check --tsconfig ./tsconfig.json && vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "build:data": "tsx scripts/build-data.ts"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "@tsconfig/svelte": "^5.0.4",
+    "@turf/area": "^7.1.0",
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-scale-chromatic": "^3.0.3",
+    "@types/leaflet": "^1.9.12",
+    "@types/papaparse": "^5.3.14",
+    "papaparse": "^5.4.1",
+    "svelte": "^5.2.7",
+    "svelte-check": "^4.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  },
+  "dependencies": {
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
+    "leaflet": "^1.9.4"
+  }
+}
