@@ -1,0 +1,25 @@
+{
+  "name": "@atlas/pipeline",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Bakes source datasets into chunked TopoJSON + catalog.json under site/data/.",
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "check": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@atlas/spec": "*",
+    "d3-array": "^3.2.4",
+    "d3-contour": "^4.0.2",
+    "d3-geo": "^3.1.1",
+    "mapshaper": "^0.7.3",
+    "pngjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-contour": "^3.0.6",
+    "@types/d3-geo": "^3.1.1",
+    "@types/pngjs": "^6.0.5"
+  }
+}

@@ -83,3 +83,32 @@ known value labelled with its own year.
 - [Our World in Data — Population](https://ourworldindata.org/population-growth) (CC BY)
 - [Our World in Data — Energy](https://github.com/owid/energy-data) (CC BY)
 - [World Bank — World Development Indicators](https://data.worldbank.org/) (CC BY-4.0)
+
+## Student browsing experience
+
+The home page now offers three question-led explorations about population,
+crowdedness, and energy. Each opens a country and updates a pair of comparison
+bars from the same dataset and selected year. Bars use a zero baseline; the map
+opens with total population on a logarithmic colour scale. A country picker
+provides an alternative to clicking small map regions. On phones, country
+stories appear below the map instead of covering it.
+
+Density and energy explanations are visible in the country story; additional
+economy and energy details are collapsed initially. The year slider, playback,
+shareable URL state, source credits, and missing-data behaviour are retained.
+
+Run `node --import tsx scripts/check-data-display.ts` for regression checks that
+keep zero values distinct from missing data. Run `npm run build` for Svelte,
+TypeScript, and production bundling checks.
+
+### Review follow-ups
+
+- Try the explorations with middle school students: can they explain the
+  difference between total population and density after comparing two countries?
+  The new design has not yet been validated with students.
+- Linear density colours are sensitive to very dense small countries. A future
+  alternative scale should explain its transformation clearly.
+- Detailed economy/energy mixes currently select each series’ latest available
+  value independently. Audit year alignment before using these mixes in lessons.
+- The bundled dataset ends in 2022. Keep that limit visible and verify new source
+  releases before expanding the timeline.

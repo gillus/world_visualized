@@ -21,20 +21,20 @@ export const METRICS: Record<MetricId, MetricDef> = {
     label: 'Population',
     unit: 'people',
     description:
-      'How many people live in a country. Shown as people per km² (density) or total people on a ×10 colour scale.',
+      'Count everyone, or see how crowded a country is on average. A square kilometre is a square 1 km on each side.',
   },
   energy: {
     id: 'energy',
     label: 'Energy use per person',
     unit: 'kWh / person',
     description:
-      'How much energy an average person uses in a year. A fair way to compare a small country with a huge one.',
+      'A country’s yearly energy use divided by its population. Includes homes, transport, and industry. kWh is a unit of energy.',
   },
 }
 
 export const POPULATION_MODES: Record<PopulationMode, { label: string; hint: string }> = {
-  density: { label: 'Density', hint: 'people per km²' },
-  logTotal: { label: 'Total (×10 scale)', hint: 'total people, log colour scale' },
+  density: { label: 'How crowded?', hint: 'people per km²' },
+  logTotal: { label: 'How many people?', hint: 'total people, log colour scale' },
 }
 
 /** The unit label for the current view (depends on population mode). */

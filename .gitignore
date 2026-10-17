@@ -5,3 +5,6 @@ dist/
 
 # Raw source downloads — large, re-creatable via `npm run build:data`. Not shipped.
 data-sources/
+
+# Baked lesson data — rebuilt by `npm run atlas:data` (and in CI). Not committed.
+site/data/

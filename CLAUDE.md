@@ -4,9 +4,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-"The World, Visualized" — an educational world atlas for teens with a time-machine year slider. A static Svelte 5 + Leaflet site: countries are coloured by a metric (population or energy per person) for the selected year.
+"The World, Visualized" — visual study aids for middle/high-school students (Italian first, English later), published as a static GitHub Pages site. The repo is mid-pivot (see `docs/DESIGN.md`):
 
-## Commands
+- **Study atlas (new, `packages/` + `site/`)** — Claude writes small JSON *lesson specs*; one viewer renders any of them. This is where new work goes.
+- **Original world atlas (`src/`, `scripts/`)** — the single-page time-machine app (Svelte 5 + Leaflet). Kept as-is until it is ported to a lesson (milestone M3).
+
+## Study atlas
+
+```bash
+npm run atlas:data     # bake datasets → site/data/ (catalog.json, chunked TopoJSON) and validate lessons
+npm run atlas:dev      # viewer dev server; open /?lesson=uk-geografia
+npm run atlas:lessons  # validate site/lessons/*.json + write site/data/lessons.json (fails on errors)
+npm run atlas:check    # tsc (spec, pipeline) + svelte-check (runtime)
+npm run atlas:build    # validate lessons + build viewer → packages/runtime/dist (deployed by .github/workflows/pages.yml)
+```
+
+- `packages/spec` — zod schema for lessons (`lesson.ts`) and the data catalog (`catalog.ts`), plus `check.ts` (cross-reference validation: data handles, feature ids, citations, promised translations). Single source of truth for the viewer, the validator and the future MCP server. Consumed as TS source (no build step).
+- `packages/pipeline` — downloads sources (cached in `data-sources/`), normalises features to `{id, name_it, name_en, …}`, simplifies once globally, splits into chunks by UN subregion (very large countries get their own chunk), writes TopoJSON + per-dataset `index.json` + `catalog.json`. Chunks carry per-country `boxes` (split at the antimeridian) for selection.
+- `packages/runtime` — Svelte 5 + d3-geo SVG viewer. `src/core/` is framework-agnostic (loader, pages, projection/zoom/label geometry, legend, classes, quiz, number formatting, URL). The basemap is projected once per size; steps zoom with a transform (`interpolateZoom`), so strokes use `vector-effect: non-scaling-stroke`. A lesson is a flat list of pages (`core/pages.ts`): each step or frame, each quiz question, then the score — each with a `Scene` (basemap, view, layers, pick). `MapView` with `still` (print) projects straight into the scene view and clips, and never animates.
+- **Series datasets** (`catalog.series`, files in `site/data/series/`) hold values per feature id per year for a geo dataset (`keys`), plus aggregates (e.g. `GBR`). A data handle may point at a series; `choropleth` and `bars` need one. Missing values are `null`; the viewer shows the latest year at or before the requested one and labels it.
+- Print mode is `?print=1` (`PrintView.svelte`): sized in mm for A4 on screen too, so maps are drawn once at their printed size.
+- `site/lessons/<id>.json` — committed lesson specs; file name must equal `id`. `site/data/` is generated and gitignored.
+
+Lesson conventions: all user-facing text is `{ it, en? }`; every step cites ≥1 key in `sources`; Wikipedia/Wikidata sources are pinned by `revid`; feature ids follow each dataset's `idScheme` (`ne/admin0` → ADM0_A3, `ne/map_units` → GU_A3 such as ENG/SCT/WLS/NIR, `ne/places` → Wikidata QID). Colours are Okabe–Ito swatch names, never hex. Adding a layer type = schema in `lesson.ts` + checks in `check.ts` + rendering in `MapView.svelte` (+ `legendFor` in `core/legend.ts` if it carries meaning, + `referencedIds` in `core/loader.ts` if it names feature ids). `ne/rivers` ids are name slugs, suffixed with the country's ADM0_A3 only when a name repeats (`severn-gbr`).
+
+## Original world atlas
+
+### Commands
 
 ```bash
 npm run build:data   # download sources & bake public/data/* — required once before dev/build
@@ -17,7 +41,7 @@ npm run build        # svelte-check + vite build → dist/
 
 `build:data` caches raw downloads in `data-sources/`; delete a file there to force a re-fetch. The app fails at startup with a "run npm run build:data" hint if `public/data/` is missing.
 
-## Architecture
+### Architecture
 
 The big split (deliberate, keeps the framework choice reversible):
 

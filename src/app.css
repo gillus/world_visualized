@@ -3,8 +3,8 @@
   --panel: rgba(24, 30, 39, 0.92);
   --panel-2: #232b37;
   --ink: #e8edf2;
-  --ink-dim: #93a1b0;
-  --accent: #4fd1c5;
+  --ink-dim: #aab6c4;
+  --accent: #c8ed79;
   --accent-soft: rgba(79, 209, 197, 0.16);
   --border: #2c3542;
   --no-data: #3a3a3a;
@@ -49,7 +49,7 @@ a {
 
 /* Leaflet sits on our dark "ocean" instead of map tiles: a faint deep-sea
    radial glow keeps the countries reading as land, not floating shapes. */
-.leaflet-container {
+.atlas-app .leaflet-container {
   background:
     radial-gradient(120% 90% at 50% 38%, #131a24 0%, #0c111a 55%, #090c12 100%);
   outline: none;
@@ -69,8 +69,7 @@ a {
 }
 
 .atlas-app {
-  position: fixed;
-  inset: 0;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -163,3 +162,7 @@ a {
     opacity: 0.5;
   }
 }
+
+button, select { touch-action: manipulation; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

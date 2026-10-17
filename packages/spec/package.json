@@ -1,0 +1,17 @@
+{
+  "name": "@atlas/spec",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Lesson + catalog schema shared by the viewer, the validator and the MCP server.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check": "tsc --noEmit -p .",
+    "lessons": "tsx scripts/check-lessons.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

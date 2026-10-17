@@ -1,0 +1,452 @@
+{
+  "schema": 0,
+  "id": "uk-geografia",
+  "title": { "it": "Il Regno Unito" },
+  "subtitle": { "it": "Isole, nazioni, montagne, fiumi e persone" },
+  "subject": "geografia",
+  "level": "medie",
+  "langs": ["it"],
+
+  "map": {
+    "projection": { "type": "conicConformal", "center": [2, 50] },
+    "extent": [[-26, 33], [36, 64]],
+    "basemap": "political"
+  },
+
+  "data": {
+    "countries": { "dataset": "ne/admin0" },
+    "units": { "dataset": "ne/map_units" },
+    "cities": { "dataset": "ne/places", "where": { "country": ["GBR", "ITA"] } },
+    "rivers": { "dataset": "ne/rivers", "where": { "country": "GBR" } },
+    "density": { "dataset": "ons/density-itl1" },
+    "income": { "dataset": "oecd/income-itl1" }
+  },
+
+  "steps": [
+    {
+      "id": "dove",
+      "title": { "it": "Dove si trova il Regno Unito?" },
+      "text": {
+        "it": "Il Regno Unito è uno **Stato insulare**: il suo territorio è fatto di isole, al largo della costa nord-occidentale dell'Europa.\n\nÈ circondato dal **Mare del Nord** a est, dal **canale della Manica** a sud, dall'**oceano Atlantico** e dal **mare d'Irlanda** a ovest. Per arrivarci dall'Italia bisogna attraversare la Francia… e poi il mare!"
+      },
+      "view": [[-16, 35], [24, 62]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "countries",
+          "groups": [
+            { "ids": ["GBR"], "label": { "it": "Regno Unito" }, "color": "vermillion" },
+            { "ids": ["ITA"], "label": { "it": "Italia" }, "color": "blue" }
+          ]
+        },
+        { "type": "labels", "data": "cities", "ids": ["Q84", "Q220"], "marker": "capital" },
+        { "type": "note", "at": [-17, 50], "text": { "it": "Oceano Atlantico" }, "style": "water" },
+        { "type": "note", "at": [3.5, 56.5], "text": { "it": "Mare del Nord" }, "style": "water" },
+        { "type": "note", "at": [6, 38.6], "text": { "it": "Mar Mediterraneo" }, "style": "water" }
+      ],
+      "cite": ["wp_regno_unito"]
+    },
+    {
+      "id": "grandezza",
+      "title": { "it": "Più grande o più piccolo dell'Italia?" },
+      "text": {
+        "it": "Un trucco da cartografi: abbiamo **spostato l'Italia** sopra il Regno Unito, senza cambiarne né la forma né la grandezza.\n\nIl Regno Unito misura circa **242 000 km²**, l'Italia circa **302 000 km²**: il Regno Unito è grande più o meno **quattro quinti** dell'Italia.\n\nPerò ci vivono più persone: circa **69,6 milioni**, contro i circa **59 milioni** dell'Italia. Quindi, in media, nel Regno Unito le persone vivono più vicine tra loro."
+      },
+      "view": [[-17, 45.5], [11, 62.5]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "countries",
+          "groups": [{ "ids": ["GBR"], "label": { "it": "Regno Unito" }, "color": "vermillion" }]
+        },
+        {
+          "type": "compare",
+          "data": "countries",
+          "id": "ITA",
+          "at": [-2.5, 54.3],
+          "label": { "it": "L'Italia, alla stessa scala" },
+          "color": "blue"
+        }
+      ],
+      "cite": ["wd_regno_unito", "wd_italia", "wp_regno_unito"]
+    },
+    {
+      "id": "isole-britanniche",
+      "title": { "it": "Le Isole Britanniche" },
+      "text": {
+        "it": "Le **Isole Britanniche** sono un **arcipelago**, cioè un gruppo di isole. Le due più grandi sono la **Gran Bretagna** e l'**Irlanda**; intorno ce ne sono tante più piccole, come l'Isola di Man, le Ebridi, le Orcadi, le Shetland e le isole del Canale.\n\nAttenzione: è un nome **geografico**, non il nome di uno Stato. Su queste isole ci sono infatti due Stati: il **Regno Unito** e la **Repubblica d'Irlanda**.\n\nCuriosità: in Irlanda questo nome è poco amato, per motivi storici e politici. Lì si preferisce dire «Irlanda e Gran Bretagna»."
+      },
+      "view": [[-12, 48.5], [4, 61.5]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "countries",
+          "groups": [
+            { "ids": ["GBR", "IRL", "IMN", "JEY", "GGY"], "label": { "it": "Isole Britanniche" }, "color": "green" }
+          ]
+        },
+        { "type": "note", "at": [-9.5, 57.5], "text": { "it": "Oceano Atlantico" }, "style": "water" },
+        { "type": "note", "at": [2.5, 56.5], "text": { "it": "Mare del Nord" }, "style": "water" }
+      ],
+      "cite": ["wp_isole_britanniche", "wp_regno_unito"]
+    },
+    {
+      "id": "gran-bretagna",
+      "title": { "it": "Gran Bretagna: un'isola" },
+      "text": {
+        "it": "La **Gran Bretagna** è l'isola più grande dell'arcipelago e anche la più grande d'Europa: circa **230 000 km²**. Da nord a sud è lunga circa **900 km**.\n\nNel punto più vicino, lo **stretto di Dover**, dista dalla Francia solo **34 km**.\n\nSulla mappa coloriamo la Gran Bretagna insieme alle isole vicine che le appartengono; accanto, in azzurro, c'è l'altra grande isola: l'**Irlanda**."
+      },
+      "view": [[-11.5, 49.5], [3.5, 61]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "units",
+          "groups": [
+            { "ids": ["ENG", "SCT", "WLS"], "label": { "it": "Gran Bretagna" }, "color": "orange" },
+            { "ids": ["IRL", "NIR"], "label": { "it": "Irlanda (l'isola)" }, "color": "sky" }
+          ]
+        },
+        { "type": "note", "at": [2.6, 50.75], "text": { "it": "Stretto di Dover" }, "style": "water" },
+        { "type": "note", "at": [-3.2, 50.0], "text": { "it": "Canale della Manica" }, "style": "water" },
+        { "type": "note", "at": [-5.0, 53.7], "text": { "it": "Mare d'Irlanda" }, "style": "water" }
+      ],
+      "cite": ["wp_gran_bretagna"]
+    },
+    {
+      "id": "regno-unito",
+      "title": { "it": "Il Regno Unito: uno Stato" },
+      "text": {
+        "it": "Il nome completo dice già tutto: **Regno Unito di Gran Bretagna e Irlanda del Nord**. Lo Stato comprende l'isola di Gran Bretagna e la parte nord-orientale dell'isola d'Irlanda.\n\nPer questo è sbagliato chiamare il Regno Unito «Inghilterra» (che ne è solo una parte) o «Gran Bretagna» (che è solo un'isola), anche se capita spesso!\n\nE l'**Isola di Man** e le **isole del Canale**? Fanno parte delle Isole Britanniche, ma **non** del Regno Unito: sono *dipendenze della Corona* britannica."
+      },
+      "view": [[-11.5, 48.8], [3.5, 61]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "units",
+          "groups": [
+            { "ids": ["ENG", "SCT", "WLS"], "label": { "it": "Gran Bretagna" }, "color": "orange" },
+            { "ids": ["NIR"], "label": { "it": "Irlanda del Nord" }, "color": "vermillion" },
+            { "ids": ["IMN", "JEY", "GGY"], "label": { "it": "Dipendenze della Corona (non nel Regno Unito)" }, "color": "grey" }
+          ]
+        },
+        {
+          "type": "labels",
+          "data": "units",
+          "ids": ["IMN", "JEY", "GGY"],
+          "marker": "none",
+          "text": { "JEY": { "it": "Jersey" }, "GGY": { "it": "Guernsey" } }
+        }
+      ],
+      "cite": ["wp_regno_unito"]
+    },
+    {
+      "id": "quattro-nazioni",
+      "title": { "it": "Le quattro nazioni" },
+      "text": {
+        "it": "Il Regno Unito è formato da **quattro nazioni costitutive**, in inglese *Home Nations*: **Inghilterra**, **Scozia**, **Galles** e **Irlanda del Nord**.\n\nOgnuna ha la sua capitale: **Londra** (che è anche la capitale di tutto il Regno Unito), **Edimburgo**, **Cardiff** e **Belfast**.\n\nLa Scozia occupa più di un terzo della Gran Bretagna e ha più di 790 isole minori; il Galles è in gran parte montuoso."
+      },
+      "view": [[-11, 49.8], [2.5, 61]],
+      "layers": [
+        {
+          "type": "highlight",
+          "data": "units",
+          "labels": true,
+          "groups": [
+            { "ids": ["ENG"], "label": { "it": "Inghilterra" }, "color": "orange" },
+            { "ids": ["SCT"], "label": { "it": "Scozia" }, "color": "blue" },
+            { "ids": ["WLS"], "label": { "it": "Galles" }, "color": "green" },
+            { "ids": ["NIR"], "label": { "it": "Irlanda del Nord" }, "color": "vermillion" }
+          ]
+        },
+        { "type": "labels", "data": "cities", "ids": ["Q84", "Q23436", "Q10690", "Q10686"], "marker": "capital" }
+      ],
+      "cite": ["wp_regno_unito", "wp_inghilterra", "wp_scozia", "wp_galles", "wp_belfast"]
+    },
+    {
+      "id": "come-si-e-formato",
+      "title": { "it": "Come è nato il Regno Unito" },
+      "text": {
+        "it": "Il Regno Unito non è nato tutto in una volta: si è formato **un pezzo alla volta**, in quasi 400 anni. Usa i pulsanti con le date per seguire la storia."
+      },
+      "view": [[-11, 49.8], [2.5, 61]],
+      "frames": [
+        {
+          "label": { "it": "1542" },
+          "text": {
+            "it": "Il Galles era stato conquistato dal re d'Inghilterra già nel **1282**. Con le leggi del **1535 e del 1542** viene **annesso** all'Inghilterra: da allora ha le stesse leggi inglesi.\n\nLa Scozia e l'Irlanda, invece, sono ancora regni separati."
+          },
+          "layers": [
+            {
+              "type": "highlight",
+              "data": "units",
+              "groups": [{ "ids": ["ENG", "WLS"], "label": { "it": "Regno d'Inghilterra (con il Galles)" }, "color": "orange" }]
+            }
+          ],
+          "cite": ["wp_galles"]
+        },
+        {
+          "label": { "it": "1707" },
+          "text": {
+            "it": "Dal 1603 Inghilterra e Scozia hanno **lo stesso re**, ma restano due regni con due parlamenti.\n\nIl **1º maggio 1707**, con gli **Atti di Unione**, si fondono in un solo Stato: il **Regno di Gran Bretagna**."
+          },
+          "layers": [
+            {
+              "type": "highlight",
+              "data": "units",
+              "groups": [{ "ids": ["ENG", "WLS", "SCT"], "label": { "it": "Regno di Gran Bretagna" }, "color": "orange" }]
+            }
+          ],
+          "cite": ["wp_atto_unione_1707", "wp_regno_gran_bretagna"]
+        },
+        {
+          "label": { "it": "1801" },
+          "text": {
+            "it": "Il **1º gennaio 1801** entra in vigore un nuovo Atto di Unione: il Regno di Gran Bretagna e il **Regno d'Irlanda** diventano il **Regno Unito di Gran Bretagna e Irlanda**.\n\nOra tutte le Isole Britanniche più grandi fanno parte di un unico Stato."
+          },
+          "layers": [
+            {
+              "type": "highlight",
+              "data": "units",
+              "groups": [
+                { "ids": ["ENG", "WLS", "SCT", "NIR", "IRL"], "label": { "it": "Regno Unito di Gran Bretagna e Irlanda" }, "color": "orange" }
+              ]
+            }
+          ],
+          "cite": ["wp_atto_unione_1800", "wp_regno_unito_gb_irlanda"]
+        },
+        {
+          "label": { "it": "1922" },
+          "text": {
+            "it": "Dopo anni di lotte, il **6 dicembre 1921** viene firmato il **trattato anglo-irlandese**. Un anno dopo nasce lo **Stato Libero d'Irlanda**: 26 delle 32 contee dell'isola lasciano il Regno Unito.\n\nLe altre sei contee, l'**Irlanda del Nord**, dove la maggioranza voleva restare unita alla Gran Bretagna, scelgono di rimanere. Ecco perché oggi il Regno Unito comprende solo una parte dell'Irlanda."
+          },
+          "layers": [
+            {
+              "type": "highlight",
+              "data": "units",
+              "groups": [
+                { "ids": ["ENG", "WLS", "SCT", "NIR"], "label": { "it": "Regno Unito" }, "color": "orange" },
+                { "ids": ["IRL"], "label": { "it": "Stato Libero d'Irlanda (oggi Repubblica d'Irlanda)" }, "color": "green" }
+              ]
+            }
+          ],
+          "cite": ["wp_trattato_anglo_irlandese", "wp_stato_libero_irlanda", "wp_irlanda_del_nord"]
+        }
+      ],
+      "cite": ["wp_regno_unito"]
+    },
+    {
+      "id": "rilievi",
+      "title": { "it": "Montagne a nord, pianure a sud" },
+      "text": {
+        "it": "Guarda i colori della mappa: più sono scuri, più il terreno è alto.\n\nLe montagne sono quasi tutte a **nord e a ovest**: le **Highlands** e i **Monti Grampiani** in Scozia, le montagne del **Galles**, i **Monti Pennini**, che attraversano il nord dell'Inghilterra per circa 400 km. Il sud-est dell'Inghilterra, invece, è fatto di **colline e pianure**.\n\nLa vetta più alta è il **Ben Nevis**, in Scozia: 1 345 metri. È la montagna più alta di tutte le Isole Britanniche, ma è meno di un terzo del Monte Bianco!"
+      },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "basemap": "physical",
+      "layers": [
+        { "type": "note", "at": [-5.3, 57.75], "text": { "it": "Highlands" }, "style": "landform" },
+        { "type": "note", "at": [-3.5, 57.05], "text": { "it": "Monti Grampiani" }, "style": "landform" },
+        { "type": "note", "at": [-3.7, 55.4], "text": { "it": "Southern Uplands" }, "style": "landform" },
+        { "type": "note", "at": [-2.2, 54.15], "text": { "it": "Monti Pennini" }, "style": "landform" },
+        { "type": "note", "at": [0.4, 52.25], "text": { "it": "Colline e pianure" }, "style": "landform" },
+        { "type": "note", "at": [-5.0036, 56.7969], "text": { "it": "Ben Nevis 1 345 m" }, "style": "peak" },
+        { "type": "note", "at": [-4.0763, 53.0685], "text": { "it": "Snowdon 1 085 m" }, "style": "peak" },
+        { "type": "note", "at": [-3.2115, 54.4542], "text": { "it": "Scafell Pike 978 m" }, "style": "peak" },
+        { "type": "note", "at": [-5.9208, 54.1803], "text": { "it": "Slieve Donard 850 m" }, "style": "peak" }
+      ],
+      "cite": ["wp_geografia_regno_unito", "wp_ben_nevis", "wp_snowdon", "wp_scafell_pike", "wp_slieve_donard", "wp_highlands", "wp_monti_grampiani", "wp_monti_pennini"]
+    },
+    {
+      "id": "fiumi",
+      "title": { "it": "Fiumi corti, ma importanti" },
+      "text": {
+        "it": "I fiumi del Regno Unito sono **tanti ma non molto lunghi**: l'isola è stretta e il mare non è mai lontano.\n\nIl più lungo è il **Severn** (354 km): nasce sulle montagne del Galles, entra in Inghilterra e finisce in un grande estuario, il canale di Bristol. Subito dopo viene il **Tamigi** (346 km), il fiume che attraversa **Londra**.\n\nPer fare un confronto: il **Po**, il fiume più lungo d'Italia, misura 652 km, quasi il doppio.\n\nIn Scozia il fiume più lungo è il **Tay** (188 km), in Irlanda del Nord il **Bann** (122 km)."
+      },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "basemap": "physical",
+      "layers": [
+        {
+          "type": "lines",
+          "data": "rivers",
+          "ids": ["severn-gbr", "thames", "trent", "great-ouse", "wye", "tay", "tweed", "bann"],
+          "text": { "thames": { "it": "Tamigi" } }
+        },
+        { "type": "labels", "data": "cities", "ids": ["Q84"], "marker": "capital" }
+      ],
+      "cite": ["wp_geografia_regno_unito", "wp_severn", "wp_tamigi", "wp_tay", "wp_po"]
+    },
+    {
+      "id": "popolazione",
+      "title": { "it": "Dove vive la gente" },
+      "text": {
+        "it": "Nel Regno Unito vivono circa **69,5 milioni** di persone (stima ufficiale del 2025). Ma non sono sparse in modo uniforme.\n\nPer le statistiche, l'Inghilterra è divisa in **9 regioni**; Scozia, Galles e Irlanda del Nord contano come una regione ciascuna. La mappa colora ogni regione secondo la sua **densità**: quante persone ci sono, in media, in ogni km². Più il colore è scuro, più la regione è affollata.\n\n**Londra** è un caso a parte: più di **5 700 abitanti per km²**. La **Scozia**, grande e piena di montagne, ne ha circa **71**. Londra, da sola, ha più abitanti di Scozia e Galles messi insieme!\n\nI cerchi sono le città più grandi: più il cerchio è grande, più gente ci vive."
+      },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "layers": [
+        {
+          "type": "choropleth",
+          "data": "density",
+          "year": 2025,
+          "title": { "it": "Densità di popolazione" },
+          "breaks": [150, 300, 450, 1000]
+        },
+        {
+          "type": "symbols",
+          "data": "cities",
+          "size": "pop",
+          "ids": ["Q84", "Q2256", "Q18125", "Q39121", "Q42448", "Q4093", "Q1425428", "Q10690", "Q41262", "Q24826", "Q23154", "Q23436", "Q10686"],
+          "title": { "it": "Abitanti delle città (con i dintorni, stima)" },
+          "color": "vermillion",
+          "text": { "Q84": { "it": "Londra" }, "Q23436": { "it": "Edimburgo" }, "Q1425428": { "it": "Newcastle" } }
+        }
+      ],
+      "cite": ["ons_popolazione", "wp_londra"]
+    },
+    {
+      "id": "nord-e-sud",
+      "title": { "it": "Regioni più ricche e meno ricche" },
+      "text": {
+        "it": "Le regioni non sono diverse solo per paesaggio: lo sono anche per **ricchezza**.\n\nQui misuriamo il **reddito disponibile per abitante**: i soldi che restano in media a ogni persona in un anno, dopo aver pagato le tasse, per spendere o risparmiare.\n\nA **Londra** sono circa **35 400 sterline**, nel **Nord-est** dell'Inghilterra circa **20 000**. La media del Regno Unito è di circa **24 800** (la linea tratteggiata nel grafico). Le regioni più ricche sono Londra e quelle intorno, nel **sud-est**.\n\nAttenzione: è una **media**. Non dice quanto costa vivere in ogni regione, né quanto sono diverse le persone che ci abitano: in ogni regione ci sono famiglie ricche e famiglie povere."
+      },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "layers": [
+        {
+          "type": "choropleth",
+          "data": "income",
+          "year": 2023,
+          "title": { "it": "Reddito disponibile per abitante" },
+          "breaks": [21000, 22000, 25000, 30000]
+        }
+      ],
+      "chart": {
+        "type": "bars",
+        "data": "income",
+        "year": 2023,
+        "title": { "it": "Reddito disponibile per abitante, regione per regione" }
+      },
+      "cite": ["oecd_reddito"]
+    }
+  ],
+
+  "quiz": [
+    {
+      "type": "locate",
+      "q": { "it": "Dov'è il Galles? Tocca la mappa." },
+      "explain": { "it": "Il Galles è la penisola a ovest dell'Inghilterra, di fronte all'Irlanda. Ha per capitale Cardiff ed è in gran parte montuoso." },
+      "view": [[-11, 49.8], [2.5, 59.5]],
+      "data": "units",
+      "ids": ["ENG", "SCT", "WLS", "NIR", "IRL"],
+      "answer": "WLS",
+      "cite": ["wp_galles"]
+    },
+    {
+      "type": "choice",
+      "q": { "it": "Il Regno Unito comprende…" },
+      "choices": [
+        { "it": "solo l'isola di Gran Bretagna" },
+        { "it": "la Gran Bretagna e l'Irlanda del Nord" },
+        { "it": "tutte le Isole Britanniche, compresa l'Irlanda" },
+        { "it": "solo l'Inghilterra" }
+      ],
+      "answer": 1,
+      "explain": { "it": "Il nome completo è «Regno Unito di Gran Bretagna e Irlanda del Nord». La Repubblica d'Irlanda è uno Stato indipendente." },
+      "cite": ["wp_regno_unito"]
+    },
+    {
+      "type": "choice",
+      "q": { "it": "Nel 1707 Inghilterra e Scozia si unirono in un solo Stato. Come si chiamava?" },
+      "choices": [
+        { "it": "Regno di Gran Bretagna" },
+        { "it": "Regno Unito di Gran Bretagna e Irlanda del Nord" },
+        { "it": "Regno di Scozia" },
+        { "it": "Commonwealth" }
+      ],
+      "answer": 0,
+      "explain": { "it": "Gli Atti di Unione del 1707 crearono il Regno di Gran Bretagna. L'Irlanda si aggiunse solo nel 1801." },
+      "cite": ["wp_atto_unione_1707"]
+    },
+    {
+      "type": "choice",
+      "q": { "it": "Qual è la montagna più alta del Regno Unito?" },
+      "choices": [{ "it": "Snowdon" }, { "it": "Scafell Pike" }, { "it": "Ben Nevis" }, { "it": "Monte Bianco" }],
+      "answer": 2,
+      "explain": { "it": "Il Ben Nevis, in Scozia, è alto 1 345 metri. Snowdon è la vetta più alta del Galles, Scafell Pike quella dell'Inghilterra. Il Monte Bianco è sulle Alpi!" },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "basemap": "physical",
+      "cite": ["wp_ben_nevis", "wp_scafell_pike"]
+    },
+    {
+      "type": "choice",
+      "q": { "it": "Qual è il fiume più lungo del Regno Unito?" },
+      "choices": [{ "it": "Il Tamigi" }, { "it": "Il Severn" }, { "it": "Il Tay" }, { "it": "Il Po" }],
+      "answer": 1,
+      "explain": { "it": "Il Severn misura 354 km, il Tamigi 346: per pochi chilometri vince il Severn. Il Po è il fiume più lungo d'Italia." },
+      "view": [[-9, 49.8], [2.2, 59]],
+      "basemap": "physical",
+      "layers": [{ "type": "lines", "data": "rivers", "ids": ["severn-gbr", "thames", "tay"], "labels": false }],
+      "cite": ["wp_severn", "wp_tamigi"]
+    },
+    {
+      "type": "choice",
+      "q": { "it": "In quale regione vivono più persone per ogni km²?" },
+      "choices": [{ "it": "Scozia" }, { "it": "Galles" }, { "it": "Londra" }, { "it": "Irlanda del Nord" }],
+      "answer": 2,
+      "explain": { "it": "Londra ha più di 5 700 abitanti per km²; la Scozia, la regione meno affollata, circa 71." },
+      "cite": ["ons_popolazione"]
+    }
+  ],
+
+  "caveats": [
+    { "it": "Confini e coste vengono da Natural Earth (scala 1:10 milioni) e sono semplificati: vanno benissimo per capire la geografia, non per misurare distanze precise." },
+    { "it": "Quando coloriamo una nazione, coloriamo anche le piccole isole che le appartengono." },
+    { "it": "Nella storia del Regno Unito usiamo i confini di oggi: per esempio, il confine tra Irlanda del Nord e Repubblica d'Irlanda è stato tracciato solo nel 1921." },
+    { "it": "I colori dei rilievi sono una semplificazione: mostrano l'altezza a grandi linee, non ogni singola collina." },
+    { "it": "I confini delle regioni sono disegnati in modo approssimato, e la densità è calcolata con le superfici della nostra mappa: i numeri possono differire di qualche unità per cento da quelli ufficiali." },
+    { "it": "I cerchi delle città contano anche i centri vicini (l'area urbana), quindi non coincidono con gli abitanti del solo comune." }
+  ],
+
+  "sources": {
+    "wp_regno_unito": { "kind": "wikipedia", "lang": "it", "title": "Regno Unito", "revid": 152933098 },
+    "wp_isole_britanniche": { "kind": "wikipedia", "lang": "it", "title": "Isole britanniche", "revid": 152777798 },
+    "wp_gran_bretagna": { "kind": "wikipedia", "lang": "it", "title": "Gran Bretagna", "revid": 151251049 },
+    "wp_inghilterra": { "kind": "wikipedia", "lang": "it", "title": "Inghilterra", "revid": 152756247 },
+    "wp_scozia": { "kind": "wikipedia", "lang": "it", "title": "Scozia", "revid": 152834768 },
+    "wp_galles": { "kind": "wikipedia", "lang": "it", "title": "Galles", "revid": 152531585 },
+    "wp_belfast": { "kind": "wikipedia", "lang": "it", "title": "Belfast", "revid": 152691860 },
+    "wd_regno_unito": { "kind": "wikidata", "qid": "Q145", "revid": 2554939741, "label": "Regno Unito: superficie e popolazione" },
+    "wd_italia": { "kind": "wikidata", "qid": "Q38", "revid": 2555049153, "label": "Italia: superficie e popolazione" },
+    "wp_irlanda_del_nord": { "kind": "wikipedia", "lang": "it", "title": "Irlanda del Nord", "revid": 152836090 },
+    "wp_atto_unione_1707": { "kind": "wikipedia", "lang": "it", "title": "Atto di Unione (1707)", "revid": 151047595 },
+    "wp_atto_unione_1800": { "kind": "wikipedia", "lang": "it", "title": "Atto di Unione (1800)", "revid": 145967362 },
+    "wp_regno_gran_bretagna": { "kind": "wikipedia", "lang": "it", "title": "Regno di Gran Bretagna", "revid": 150232165 },
+    "wp_regno_unito_gb_irlanda": { "kind": "wikipedia", "lang": "it", "title": "Regno Unito di Gran Bretagna e Irlanda", "revid": 146545299 },
+    "wp_trattato_anglo_irlandese": { "kind": "wikipedia", "lang": "it", "title": "Trattato anglo-irlandese", "revid": 150610007 },
+    "wp_stato_libero_irlanda": { "kind": "wikipedia", "lang": "it", "title": "Stato Libero d'Irlanda", "revid": 148629631 },
+    "wp_geografia_regno_unito": { "kind": "wikipedia", "lang": "it", "title": "Geografia del Regno Unito", "revid": 148304314 },
+    "wp_ben_nevis": { "kind": "wikipedia", "lang": "it", "title": "Ben Nevis", "revid": 151605805 },
+    "wp_snowdon": { "kind": "wikipedia", "lang": "it", "title": "Snowdon (Galles)", "revid": 152392606 },
+    "wp_scafell_pike": { "kind": "wikipedia", "lang": "it", "title": "Scafell Pike", "revid": 151763919 },
+    "wp_slieve_donard": { "kind": "wikipedia", "lang": "it", "title": "Slieve Donard", "revid": 148716512 },
+    "wp_highlands": { "kind": "wikipedia", "lang": "it", "title": "Highlands", "revid": 150904025 },
+    "wp_monti_grampiani": { "kind": "wikipedia", "lang": "it", "title": "Monti Grampiani", "revid": 142981455 },
+    "wp_monti_pennini": { "kind": "wikipedia", "lang": "it", "title": "Monti Pennini", "revid": 152742167 },
+    "wp_severn": { "kind": "wikipedia", "lang": "it", "title": "Severn", "revid": 152291715 },
+    "wp_tamigi": { "kind": "wikipedia", "lang": "it", "title": "Tamigi", "revid": 150589757 },
+    "wp_tay": { "kind": "wikipedia", "lang": "it", "title": "Tay (fiume)", "revid": 135449158 },
+    "wp_po": { "kind": "wikipedia", "lang": "it", "title": "Po", "revid": 152867019 },
+    "wp_londra": { "kind": "wikipedia", "lang": "it", "title": "Londra", "revid": 152441562 },
+    "ons_popolazione": {
+      "kind": "web",
+      "url": "https://www.nomisweb.co.uk/datasets/pestsyoala",
+      "title": "Population estimates – local authority based by single year of age",
+      "publisher": "Office for National Statistics (Nomis)",
+      "accessed": "2026-10-17"
+    },
+    "oecd_reddito": {
+      "kind": "web",
+      "url": "https://data-explorer.oecd.org/",
+      "title": "OECD Regional Database: household disposable income per head (TL2 regions)",
+      "publisher": "OECD",
+      "accessed": "2026-10-17"
+    }
+  }
+}

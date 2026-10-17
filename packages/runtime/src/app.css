@@ -1,0 +1,115 @@
+/* ---------------------------------------------------------------------------
+   Study atlas — visual tokens.
+   A printed school-atlas plate: pale sea with waterlined coasts, white land,
+   navy ink. Highlights use the Okabe–Ito palette (colour-blind safe).
+   --------------------------------------------------------------------------- */
+
+:root {
+  --sea: #d6e6ec;
+  --waterline: #9dbccb;
+  --land: #fdfdfb;
+  --border: #b9c3cc;
+  --ink: #16263d;
+  --ink-soft: #4d5d72;
+  --water-ink: #4c7a92;
+  --accent: #1d4f91;
+  --accent-ink: #ffffff;
+  --rule: #dfe5ea;
+  --panel: #ffffff;
+  --halo: rgba(253, 253, 251, 0.92);
+  --river: #2f7bb3;
+  --no-data: #d3d8de;
+
+  /* Physical basemap: muted hypsometric tints, lowland sage → upland tan → snow. */
+  --relief-0: #eef2e3;
+  --relief-200: #f2ecd1;
+  --relief-500: #e7d8ae;
+  --relief-1000: #d8be90;
+  --relief-1500: #c8a57c;
+  --relief-2000: #b69079;
+  --relief-3000: #a4887f;
+  --relief-4000: #ebe7e4;
+  --relief-top: #f6f4f2;
+  --border-on-relief: rgba(77, 93, 114, 0.5);
+
+  /* Okabe–Ito */
+  --sw-orange: #e69f00;
+  --sw-sky: #56b4e9;
+  --sw-green: #009e73;
+  --sw-yellow: #f0e442;
+  --sw-blue: #0072b2;
+  --sw-vermillion: #d55e00;
+  --sw-purple: #cc79a7;
+  --sw-grey: #9aa3ad;
+
+  --font: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.563rem;
+  --step-3: 1.953rem;
+
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--sea);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  :root {
+    font-size: 11pt;
+  }
+  html,
+  body,
+  #app {
+    height: auto;
+    background: #fff;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

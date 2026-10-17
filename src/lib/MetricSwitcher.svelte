@@ -10,11 +10,10 @@
 </script>
 
 <div class="switcher">
-  <div class="metrics" role="tablist" aria-label="Metric">
+  <div class="metrics" role="group" aria-label="Metric">
     {#each metricIds as id}
       <button
-        role="tab"
-        aria-selected={$view.metric === id}
+        aria-pressed={$view.metric === id}
         class:active={$view.metric === id}
         onclick={() => atlas.setMetric(id)}
       >
@@ -27,6 +26,7 @@
     <div class="modes">
       {#each Object.entries(POPULATION_MODES) as [mode, def]}
         <button
+          aria-pressed={$view.populationMode === mode}
           class:active={$view.populationMode === mode}
           title={def.hint}
           onclick={() => atlas.setPopulationMode(mode as 'density' | 'logTotal')}

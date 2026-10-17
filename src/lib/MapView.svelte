@@ -54,8 +54,13 @@
       maxZoom: 6,
       worldCopyJump: true,
       attributionControl: false,
-      zoomControl: true,
+      zoomControl: false,
+      scrollWheelZoom: false,
     })
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map)
+    const resizeObserver = new ResizeObserver(() => map?.invalidateSize())
+    resizeObserver.observe(mapEl)
 
     geoLayer = L.geoJSON(atlas.data.borders, {
       onEachFeature: (feature, layer) => {
@@ -82,6 +87,7 @@
     }).addTo(map)
 
     restyle()
+    return () => resizeObserver.disconnect()
   })
 
   // Re-colour whenever the view changes. Reading these fields registers the deps.

@@ -50,7 +50,7 @@ export function valueDomain(
   let max = -Infinity
   for (const iso of Object.keys(stats)) {
     const v = metricValue(stats, iso, metric, year, popMode)
-    if (v == null || !Number.isFinite(v) || v <= 0) continue
+    if (v == null || !Number.isFinite(v) || v < 0 || (metric === 'population' && popMode === 'logTotal' && v === 0)) continue
     if (v < min) min = v
     if (v > max) max = v
   }

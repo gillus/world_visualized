@@ -62,7 +62,7 @@
   })
 </script>
 
-<svg class="spark" viewBox="0 0 {width} {height}" width={width} height={height} role="img">
+<svg class="spark" viewBox="0 0 {width} {height}" width={width} height={height} role="img" aria-label="Trend over time; the dot marks the selected year. The vertical scale fits this country’s values.">
   <defs>
     <linearGradient id="spark-fill" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.28" />

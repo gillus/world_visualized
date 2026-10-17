@@ -9,7 +9,12 @@
     "build": "svelte-check --tsconfig ./tsconfig.json && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "build:data": "tsx scripts/build-data.ts"
+    "build:data": "tsx scripts/build-data.ts",
+    "atlas:data": "npm run build -w @atlas/pipeline && npm run lessons -w @atlas/spec",
+    "atlas:lessons": "npm run lessons -w @atlas/spec",
+    "atlas:dev": "npm run dev -w @atlas/runtime",
+    "atlas:build": "npm run lessons -w @atlas/spec && npm run build -w @atlas/runtime",
+    "atlas:check": "npm run check -w @atlas/spec && npm run check -w @atlas/pipeline && npm run check -w @atlas/runtime"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.4",
@@ -30,5 +35,8 @@
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
     "leaflet": "^1.9.4"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

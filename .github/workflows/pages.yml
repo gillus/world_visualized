@@ -1,0 +1,55 @@
+# Build the study atlas (data pipeline → lesson validation → viewer) and
+# publish it to GitHub Pages. A lesson that fails validation fails the build,
+# so it never reaches the site.
+name: Deploy study atlas
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Raw downloads (Natural Earth etc.) rarely change; don't re-fetch every push.
+      - uses: actions/cache@v4
+        with:
+          path: data-sources
+          key: data-sources-${{ hashFiles('packages/pipeline/src/**') }}
+          restore-keys: data-sources-
+
+      - run: npm ci
+      - run: npm run atlas:check
+      - run: npm run atlas:data
+      - run: npm run atlas:build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/runtime/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

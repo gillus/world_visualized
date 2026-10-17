@@ -30,7 +30,7 @@ export function createAtlas(data: AtlasData): Atlas {
   const initial: AtlasState = {
     year: clamp(fromUrl.year ?? yearMax, yearMin, yearMax),
     metric: fromUrl.metric ?? 'population',
-    populationMode: fromUrl.populationMode ?? 'density',
+    populationMode: fromUrl.populationMode ?? 'logTotal',
     selected: fromUrl.selected ?? null,
     playing: false,
   }

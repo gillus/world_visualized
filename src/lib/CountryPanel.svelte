@@ -115,8 +115,8 @@
 
   // Section open/closed state lives outside the {#if}-rendered card, so it
   // survives switching countries within a session.
-  let economyOpen = $state(true)
-  let energyOpen = $state(true)
+  let economyOpen = $state(false)
+  let energyOpen = $state(false)
 
   // "· 2019" tag when an intel value lags the slider year.
   function lag(dataYear: number): string {
@@ -153,6 +153,8 @@
         <p class="rank">Higher than <b>{percentile}%</b> of countries this year.</p>
       {/if}
     {/if}
+
+    <p class="reading-tip">{ $view.metric === 'energy' ? 'Energy powers homes, transport, and industry. This is the country’s energy use divided by its population, not a household electricity bill.' : $view.populationMode === 'density' ? 'Imagine spreading everyone evenly across the country. This is how many people would share each 1 km × 1 km square. Real neighbourhoods vary!' : 'k means thousand, M means million, and B means billion. Try the crowdedness view to see how much space people share.' }</p>
 
     <div class="spark-wrap">
       <div class="spark-label">{yearMin}–{yearMax}</div>
@@ -273,10 +275,9 @@
     --c-fos: #d55e00;
     --c-nuc: #cc79a7;
     --c-ren: #009e73;
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 17rem;
+    position: relative;
+    flex: 0 0 19rem;
+    width: 19rem;
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -284,10 +285,13 @@
     z-index: 650;
     box-shadow: 0 6px 26px rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(6px);
-    max-height: calc(100% - 1.5rem);
+    max-height: 530px;
     overflow-y: auto;
   }
+  .reading-tip { font-size:.85rem; line-height:1.6; color:var(--ink-dim); padding:.8rem; background:var(--panel-2); border-radius:8px; }
   .close {
+    min-width: 44px;
+    min-height: 44px;
     position: absolute;
     top: 0.5rem;
     right: 0.6rem;
@@ -445,12 +449,10 @@
   .dot.ren {
     background: var(--c-ren);
   }
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
     .panel {
-      top: auto;
-      bottom: 0.75rem;
-      left: 0.75rem;
-      right: 0.75rem;
+      flex: auto;
+      max-height: none;
       width: auto;
     }
   }

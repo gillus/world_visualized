@@ -46,7 +46,7 @@ export function buildColorScale(
     log: useLog,
     domain: [lo, hi],
     color(value) {
-      if (value == null || !Number.isFinite(value) || value <= 0) return NO_DATA_COLOR
+      if (value == null || !Number.isFinite(value) || value < 0 || (useLog && value === 0)) return NO_DATA_COLOR
       return scale(value)
     },
     sample(t) {
