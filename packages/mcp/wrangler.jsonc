@@ -14,7 +14,7 @@
   "vars": {
     "PUBLIC_URL": "https://study-atlas-mcp.lucagilli-p.workers.dev",
     "SITE_URL": "https://gillus.github.io/world_visualized/",
-    "ALLOWED_LOGINS": "gillus"
+    "ALLOWED_LOGINS": "gillus,shalini27"
   },
   "kv_namespaces": [
     { "binding": "OAUTH_KV", "id": "3763186ca7704d54ab67f9c762f45c12" },
