@@ -12,7 +12,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { createServer } from '../src/server'
 import { Site } from '../src/site'
-import type { DraftStore } from '../src/drafts'
+import type { KvStore } from '../src/drafts'
 
 globalThis.crypto ??= webcrypto as Crypto
 
@@ -21,7 +21,7 @@ const SITE = join(HERE, '..', '..', '..', 'site')
 
 const site = new Site('https://example.org/atlas/', async (path) => JSON.parse(await readFile(join(SITE, path), 'utf8')))
 const kv = new Map<string, string>()
-const drafts: DraftStore = { get: async (k) => kv.get(k) ?? null, put: async (k, v) => void kv.set(k, v) }
+const drafts: KvStore = { get: async (k) => kv.get(k) ?? null, put: async (k, v) => void kv.set(k, v) }
 const guide = await readFile(join(HERE, '..', 'src', 'guide.md'), 'utf8')
 
 async function connect(user: string): Promise<Client> {
@@ -52,7 +52,7 @@ async function call(client: Client, name: string, args: Record<string, unknown> 
 
 const alice = await connect('alice')
 const tools = (await alice.listTools()).tools.map((t) => t.name)
-check('tools listed', tools.length === 9, tools.join(', '))
+check('tools listed', tools.length === 11, tools.join(', '))
 
 const g = await call(alice, 'get_authoring_guide')
 check('guide includes schema and lessons', g.text.includes('"$defs"') && g.text.includes('uk-geografia'), `${g.text.length} chars`)
@@ -100,6 +100,35 @@ check('get_lesson draft', back.json?.id === 'uk-geografia')
 const bob = await connect('bob')
 const stolen = await call(bob, 'preview_lesson', { lesson: lesson.json, draft: saved.json.draft })
 check("another author can't replace a draft", stolen.isError)
+
+const none = await call(alice, 'get_curriculum', { student: 's' })
+check('get_curriculum before any save → error', none.isError)
+const snapshot = {
+  student: 's',
+  class: '2ª media',
+  as_of: '2026-10-17',
+  subjects: [
+    {
+      subject: 'STORIA',
+      topics: [{ date: '2026-10-15', topic: "L'età comunale: pag. 112-118" }],
+      upcoming: [{ date: '2026-10-22', kind: 'test', text: 'Verifica sui comuni' }],
+    },
+  ],
+}
+const stored = await call(alice, 'save_curriculum', { snapshot })
+check('save_curriculum', stored.json?.saved === true && stored.json.subjects[0] === 'STORIA: 1 topics, 1 upcoming', stored.text)
+await call(bob, 'save_curriculum', { snapshot: { ...snapshot, student: 'a', class: '1º liceo' } })
+const one = await call(bob, 'get_curriculum', { student: 's' })
+check('get_curriculum one student', one.json?.subjects[0].upcoming[0].kind === 'test' && one.json.saved_by === 'alice' && one.json.age_days === 0)
+const all = await call(alice, 'get_curriculum')
+check('get_curriculum every student', all.json?.length === 2)
+const email = await call(alice, 'save_curriculum', {
+  snapshot: { ...snapshot, subjects: [{ ...snapshot.subjects[0], upcoming: [{ date: '2026-10-22', kind: 'reminder', text: 'Scrivere a prof@scuola.it' }] }] },
+})
+check('save_curriculum refuses email addresses', email.isError)
+const badDate = await call(alice, 'save_curriculum', { snapshot: { ...snapshot, as_of: '17/10/2026' } })
+check('save_curriculum refuses non-ISO dates', badDate.isError)
+check('the curriculum is not a draft', !(await call(alice, 'get_lesson', { draft: 'curriculum' })).json)
 
 const hits = await call(alice, 'find_sources', { query: 'Ben Nevis' })
 check('find_sources Ben Nevis', hits.json[0]?.source?.revid > 0 && hits.json[0].intro.length > 50, `${hits.json[0]?.title} @${hits.json[0]?.revid}`)

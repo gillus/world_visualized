@@ -48,3 +48,15 @@ Wrangler needs **Node 22 or newer**. Run the commands below from this folder.
 
 The Worker reads data from the published site (`SITE_URL`), caching it for five
 minutes, so new data and lessons need only a Pages deploy, not a Worker deploy.
+
+## The children's curriculum
+
+`get_curriculum` tells Claude what each child is studying: recent topics per
+subject and upcoming homework and tests. Nothing in this Worker talks to the
+school: a daily scheduled Claude task on the family PC, which has both this
+connector and the local school connector (`../claude-toolshed/schoolwork-tracker`,
+Argo didUP, with `ARGO_REDACT_NAMES=true`), reads the register and calls
+`save_curriculum` once per child. The snapshot is one KV key (`curriculum`) in
+the drafts namespace; the public `/drafts/<id>` route never reads it. It holds
+no grades, absences or names, and only signed-in family members can read it.
+The task's prompt is in `CURRICULUM_TASK.md`.

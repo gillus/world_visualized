@@ -3,8 +3,8 @@
 // replaces the draft, so a link shared with a parent keeps working while the
 // lesson is revised.
 
-/** The subset of KVNamespace drafts need (a Map stands in for it in the smoke test). */
-export interface DraftStore {
+/** The subset of KVNamespace drafts and the curriculum need (a Map stands in for it in the smoke test). */
+export interface KvStore {
   get(key: string): Promise<string | null>
   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>
 }
@@ -28,12 +28,12 @@ export function newDraftId(): string {
   return Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join('')
 }
 
-export async function getDraft(store: DraftStore, id: string): Promise<Draft | null> {
+export async function getDraft(store: KvStore, id: string): Promise<Draft | null> {
   if (!isDraftId(id)) return null
   const raw = await store.get(`draft:${id}`)
   return raw ? (JSON.parse(raw) as Draft) : null
 }
 
-export async function putDraft(store: DraftStore, id: string, draft: Draft): Promise<void> {
+export async function putDraft(store: KvStore, id: string, draft: Draft): Promise<void> {
   await store.put(`draft:${id}`, JSON.stringify(draft), { expirationTtl: DRAFT_TTL_DAYS * 24 * 3600 })
 }

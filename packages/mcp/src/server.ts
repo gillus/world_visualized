@@ -1,6 +1,7 @@
 // The MCP server: tools Claude uses to write a lesson — read the authoring
-// guide, look up data and sources, validate, and preview a draft. One server
-// per request (the transport is stateless); everything slow is cached in Site.
+// guide and the children's curriculum, look up data and sources, validate, and
+// preview a draft. One server per request (the transport is stateless);
+// everything slow is cached in Site.
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { jsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/index.js'
@@ -9,11 +10,13 @@ import { hasErrors, lessonJsonSchema, validateLesson, type Issue } from '@atlas/
 import type { Site } from './site'
 import { describeDataset, findGeo, searchSeries } from './lookup'
 import { findSources, readSource } from './wiki'
-import { DRAFT_TTL_DAYS, getDraft, isDraftId, newDraftId, putDraft, type DraftStore } from './drafts'
+import { DRAFT_TTL_DAYS, getDraft, isDraftId, newDraftId, putDraft, type KvStore } from './drafts'
+import { STALE_DAYS, Snapshot, StudentId, getCurriculum, saveCurriculum } from './curriculum'
 
 export interface ServerDeps {
   site: Site
-  drafts: DraftStore
+  /** Drafts and the curriculum (the Worker's DRAFTS namespace). */
+  drafts: KvStore
   /** The authoring guide (Markdown). */
   guide: string
   /** GitHub login of the signed-in author. */
@@ -23,7 +26,8 @@ export interface ServerDeps {
 }
 
 const INSTRUCTIONS = `Study Atlas: Claude writes visual study lessons (maps + short texts + a quiz) for Italian middle- and high-school students.
-Always call get_authoring_guide first: it explains the lesson format, the workflow and the rules (citations, tone, data).`
+Always call get_authoring_guide first: it explains the lesson format, the workflow and the rules (citations, tone, data).
+get_curriculum tells you what each child is studying at school right now.`
 
 const LonLat = z.tuple([z.number(), z.number()])
 const ExtentArg = z.tuple([LonLat, LonLat]).describe('[[west, south], [east, north]] in degrees')
@@ -51,7 +55,7 @@ function report(issues: Issue[]) {
 
 export function createServer({ site, drafts, guide, user, jsonSchemaValidator }: ServerDeps): McpServer {
   const server = new McpServer(
-    { name: 'study-atlas', title: 'Study Atlas', version: '0.2.0' },
+    { name: 'study-atlas', title: 'Study Atlas', version: '0.3.0' },
     { instructions: INSTRUCTIONS, ...(jsonSchemaValidator ? { jsonSchemaValidator } : {}) },
   )
   const readOnly = { readOnlyHint: true, openWorldHint: false }
@@ -75,6 +79,33 @@ export function createServer({ site, drafts, guide, user, jsonSchemaValidator }:
         `## Lesson JSON Schema\n\nGenerated from the validator's own schema. Fields with a \`default\` may be omitted.\n\n\`\`\`json\n${JSON.stringify(lessonJsonSchema())}\n\`\`\``,
       ].join('\n\n')
       return { content: [{ type: 'text', text }] }
+    },
+  )
+
+  server.registerTool(
+    'get_curriculum',
+    {
+      title: 'What the children study',
+      description: `What a child is studying at school, from the class register: topics taught recently per subject, and homework, tests and reminders coming up. Without \`student\`, every child. Each snapshot has its age; one older than ${STALE_DAYS} days is flagged \`stale\`. Private: never put names, the school, the class or teachers in a lesson.`,
+      inputSchema: { student: StudentId.optional() },
+      annotations: readOnly,
+    },
+    async ({ student }) => json(await getCurriculum(drafts, student)),
+  )
+
+  server.registerTool(
+    'save_curriculum',
+    {
+      title: 'Save what a child studies',
+      description:
+        "Replace one child's curriculum snapshot. Used by the daily sync that reads the school register, not while writing a lesson. Copy topics and homework from the register; leave out grades, absences, notices and people's names.",
+      inputSchema: { snapshot: Snapshot },
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+    },
+    async ({ snapshot }) => {
+      const saved = await saveCurriculum(drafts, snapshot, user)
+      const counts = saved.subjects.map((s) => `${s.subject}: ${s.topics.length} topics, ${s.upcoming.length} upcoming`)
+      return json({ saved: true, student: saved.student, as_of: saved.as_of, subjects: counts })
     },
   )
 

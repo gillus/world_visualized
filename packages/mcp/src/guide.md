@@ -13,6 +13,8 @@ Nothing you make is public until a parent publishes it.
 1. **Agree the brief.** Topic, level (`medie` = 11–14, `superiori` = 14–18) and
    any angle the parent wants (e.g. "for a test on Thursday about rivers").
    Ask only if it is genuinely unclear; otherwise state your assumption.
+   When the lesson is for one of the children, read `get_curriculum` first
+   (see *Following the school* below).
 2. **Gather facts and sources.** `find_sources` (Italian Wikipedia first; English
    when Italian is thin), then `read_source` on the articles you will rely on.
    Every number, date and claim in the text must appear in a source you cite.
@@ -30,6 +32,25 @@ Nothing you make is public until a parent publishes it.
 
 Look at a published lesson with `get_lesson` before writing your first one: it
 shows every layer type in real use.
+
+## Following the school
+
+`get_curriculum` has, per child, the topics taught recently in each subject
+(copied from the class register, newest first) and the homework, tests and
+teacher reminders coming up. A daily sync updates it; check `age_days`.
+
+- **Match the class.** Set `level` from the child's class. Build on what was
+  taught: use the teacher's terms and examples, and don't jump ahead of the
+  programme unless the parent asks.
+- **A test coming up is a good brief.** If the parent asks "what should we
+  study?", suggest a lesson for the nearest `test` whose topic suits a map.
+- **The register is terse** ("Pag. 112-118, i comuni"): read the topics around
+  it in the same subject to understand the scope, and say what you assumed.
+- **Not every topic fits a map.** Grammar or algebra don't; say so rather than
+  forcing one.
+- **Keep it private.** Lessons are published on a public site. Never put a
+  child's name or initials, the school, the class or a teacher in a lesson, and
+  don't quote the register in it.
 
 ## Shape of a good lesson
 
