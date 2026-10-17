@@ -6,3 +6,5 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '.
 export const RAW = join(ROOT, 'data-sources')
 /** Baked output served by the site (gitignored, rebuilt in CI). */
 export const DATA = join(ROOT, 'site', 'data')
+/** Committed copies of sources whose APIs are unreliable (see fetchCached). */
+export const SNAPSHOTS = join(ROOT, 'packages', 'pipeline', 'snapshots')

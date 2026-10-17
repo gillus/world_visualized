@@ -153,7 +153,7 @@ export async function buildUkRegions(): Promise<{ datasets: Dataset[]; series: S
   })
 
   // --- population (ONS) -------------------------------------------------------
-  const popRows = parseCsv(await fetchCached(NOMIS_URL, 'nomis-population-itl1.csv'))
+  const popRows = parseCsv(await fetchCached(NOMIS_URL, 'nomis-population-itl1.csv', { snapshot: true }))
   const population: Record<string, Record<string, number | null>> = {}
   for (const row of popRows) {
     const gss = row.GEOGRAPHY_CODE
@@ -203,7 +203,7 @@ export async function buildUkRegions(): Promise<{ datasets: Dataset[]; series: S
   )
 
   // --- income (OECD) ----------------------------------------------------------
-  const incomeRows = parseCsv(await fetchCached(OECD_URL, 'oecd-income-itl1.csv'))
+  const incomeRows = parseCsv(await fetchCached(OECD_URL, 'oecd-income-itl1.csv', { snapshot: true }))
   const income: Record<string, Record<string, number | null>> = {}
   const ukIncome: Record<string, number | null> = {}
   for (const row of incomeRows) {

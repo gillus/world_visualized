@@ -3,7 +3,7 @@
 
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { RAW } from './paths'
+import { RAW, SNAPSHOTS } from './paths'
 
 /** GET with a few retries: statistics APIs throw the odd 429/5xx under load. */
 async function get(url: string, attempts = 4): Promise<Response> {
@@ -16,7 +16,13 @@ async function get(url: string, attempts = 4): Promise<Response> {
   }
 }
 
-export async function fetchCached(url: string, file: string): Promise<string> {
+/**
+ * `snapshot: true` names a committed copy in packages/pipeline/snapshots/<file>,
+ * used (with a warning) when the live source fails — some statistics APIs
+ * reject or drop requests from CI runners. Refresh it by copying the cached
+ * file from data-sources/ after a successful local fetch.
+ */
+export async function fetchCached(url: string, file: string, { snapshot = false } = {}): Promise<string> {
   const path = join(RAW, file)
   try {
     await access(path)
@@ -26,7 +32,14 @@ export async function fetchCached(url: string, file: string): Promise<string> {
     // not cached yet
   }
   console.log(`  fetch    ${url}`)
-  const body = await (await get(url)).text()
+  let body: string
+  try {
+    body = await (await get(url)).text()
+  } catch (err) {
+    if (!snapshot) throw err
+    console.warn(`  WARNING  ${(err as Error).message}\n           using the committed snapshot snapshots/${file}`)
+    return readFile(join(SNAPSHOTS, file), 'utf8')
+  }
   await mkdir(RAW, { recursive: true })
   await writeFile(path, body)
   return body
