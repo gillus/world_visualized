@@ -8,8 +8,13 @@
   document.documentElement.lang = lang
 </script>
 
-{#if url.lesson}
-  <LessonView lessonId={url.lesson} initial={{ step: url.step, frame: url.frame, quiz: url.quiz }} {lang} print={url.print} />
+{#if url.lesson || url.draft}
+  <LessonView
+    link={url.lesson ? { lesson: url.lesson } : { draft: url.draft! }}
+    initial={{ step: url.step, frame: url.frame, quiz: url.quiz }}
+    {lang}
+    print={url.print}
+  />
 {:else}
   <LessonIndex {lang} />
 {/if}

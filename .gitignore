@@ -8,3 +8,10 @@ data-sources/
 
 # Baked lesson data — rebuilt by `npm run atlas:data` (and in CI). Not committed.
 site/data/
+
+# Cloudflare Worker local state and secrets (packages/mcp).
+.wrangler/
+.dev.vars
+
+# Local overrides of the viewer env (e.g. a local MCP Worker for drafts).
+*.local

@@ -5,7 +5,7 @@
   import { loadCatalog, loadLesson, loadLessonData, LoadError, type LessonData } from '../core/loader'
   import { lessonPages, pageIndexOf, positionOf, type Page, type Position } from '../core/pages'
   import type { Answer } from '../core/quiz'
-  import { writeUrl } from '../core/url'
+  import { writeUrl, type LessonLink } from '../core/url'
   import { ui } from '../core/ui'
   import MapView from './MapView.svelte'
   import LessonPanel from './LessonPanel.svelte'
@@ -13,7 +13,7 @@
   import SourcesDialog from './SourcesDialog.svelte'
   import ErrorPanel from './ErrorPanel.svelte'
 
-  let { lessonId, initial, lang, print = false }: { lessonId: string; initial: Position; lang: Lang; print?: boolean } = $props()
+  let { link, initial, lang, print = false }: { link: LessonLink; initial: Position; lang: Lang; print?: boolean } = $props()
 
   let lesson = $state<Lesson | null>(null)
   let data = $state<LessonData | null>(null)
@@ -28,13 +28,13 @@
 
   onMount(async () => {
     try {
-      const [l, catalog] = await Promise.all([loadLesson(lessonId), loadCatalog()])
+      const [l, catalog] = await Promise.all([loadLesson(link), loadCatalog()])
       pages = lessonPages(l)
       index = pageIndexOf(pages, initial)
       answers = l.quiz.map(() => null)
       data = await loadLessonData(l, catalog)
       lesson = l
-      document.title = `${pick(l.title, lang)} · ${t.siteTitle}`
+      document.title = `${link.draft ? `${t.draft} · ` : ''}${pick(l.title, lang)} · ${t.siteTitle}`
     } catch (err) {
       error = err instanceof LoadError ? err : new LoadError(String(err))
     }
@@ -43,7 +43,7 @@
   function go(i: number) {
     if (!lesson || i < 0 || i >= pages.length) return
     index = i
-    history.replaceState(null, '', writeUrl({ lesson: lesson.id, lang, ...positionOf(pages, index) }))
+    history.replaceState(null, '', writeUrl({ ...link, lang, ...positionOf(pages, index) }))
   }
 
   function answer(questionIndex: number, a: Answer) {
@@ -55,7 +55,7 @@
     go(pages.findIndex((p) => p.kind === 'question'))
   }
 
-  const printHref = $derived(lesson ? writeUrl({ lesson: lesson.id, lang, print: true }) : '')
+  const printHref = $derived(writeUrl({ ...link, lang, print: true }))
 
   function onkeydown(e: KeyboardEvent) {
     if (print || sourcesOpen || e.altKey || e.ctrlKey || e.metaKey) return
@@ -78,7 +78,7 @@
 {#if error}
   <ErrorPanel {error} {lang} />
 {:else if lesson && data && print}
-  <PrintView {lesson} {data} {pages} {lang} />
+  <PrintView {lesson} {data} {pages} {lang} {link} />
 {:else if lesson && data && page}
   <main class="lesson">
     <div class="map-area">
@@ -101,6 +101,7 @@
       {lang}
       {answers}
       {printHref}
+      draft={link.draft !== undefined}
       onnav={go}
       onanswer={answer}
       onretry={retry}

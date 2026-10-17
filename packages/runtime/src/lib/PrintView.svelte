@@ -6,7 +6,7 @@
   import type { LessonData } from '../core/loader'
   import type { Page } from '../core/pages'
   import { legendFor, reliefBandsIn } from '../core/legend'
-  import { writeUrl } from '../core/url'
+  import { writeUrl, type LessonLink } from '../core/url'
   import { ui } from '../core/ui'
   import MapView from './MapView.svelte'
   import RichText from './RichText.svelte'
@@ -15,7 +15,8 @@
   import Cites from './Cites.svelte'
   import SourcesList from './SourcesList.svelte'
 
-  let { lesson, data, pages, lang }: { lesson: Lesson; data: LessonData; pages: Page[]; lang: Lang } = $props()
+  let { lesson, data, pages, lang, link }: { lesson: Lesson; data: LessonData; pages: Page[]; lang: Lang; link: LessonLink } =
+    $props()
 
   const t = $derived(ui(lang))
   const stepPages = $derived(pages.filter((p): p is Extract<Page, { kind: 'step' }> => p.kind === 'step'))
@@ -38,12 +39,15 @@
 
 <div class="print">
   <div class="toolbar">
-    <a href={writeUrl({ lesson: lesson.id, lang })}>{t.backToLesson}</a>
+    <a href={writeUrl({ ...link, lang })}>{t.backToLesson}</a>
     <button onclick={() => window.print()}>{t.printNow}</button>
   </div>
 
   <header class="cover">
-    <p class="meta">{t.subject[lesson.subject]} · {t.level[lesson.level]}</p>
+    <p class="meta">
+      {#if link.draft}<strong class="draft">{t.draft}</strong> ·{/if}
+      {t.subject[lesson.subject]} · {t.level[lesson.level]}
+    </p>
     <h1>{pick(lesson.title, lang)}</h1>
     {#if lesson.subtitle}<p class="subtitle">{pick(lesson.subtitle, lang)}</p>{/if}
   </header>
@@ -150,6 +154,9 @@
   .meta {
     margin: 0;
     color: var(--ink-soft);
+  }
+  .draft {
+    color: var(--accent);
   }
   h1 {
     margin: 0.2rem 0 0;

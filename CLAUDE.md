@@ -17,6 +17,8 @@ npm run atlas:dev      # viewer dev server; open /?lesson=uk-geografia
 npm run atlas:lessons  # validate site/lessons/*.json + write site/data/lessons.json (fails on errors)
 npm run atlas:check    # tsc (spec, pipeline) + svelte-check (runtime)
 npm run atlas:build    # validate lessons + build viewer → packages/runtime/dist (deployed by .github/workflows/pages.yml)
+npm run mcp:smoke      # call every MCP tool in-process against local site/ (needs atlas:data and the network)
+npm run mcp:dev        # the Worker locally (wrangler, Node ≥ 22); mcp:deploy to Cloudflare
 ```
 
 - `packages/spec` — zod schema for lessons (`lesson.ts`) and the data catalog (`catalog.ts`), plus `check.ts` (cross-reference validation: data handles, feature ids, citations, promised translations). Single source of truth for the viewer, the validator and the future MCP server. Consumed as TS source (no build step).
@@ -25,6 +27,7 @@ npm run atlas:build    # validate lessons + build viewer → packages/runtime/di
 - **Series datasets** (`catalog.series`, files in `site/data/series/`) hold values per feature id per year for a geo dataset (`keys`), plus aggregates (e.g. `GBR`). A data handle may point at a series; `choropleth` and `bars` need one. Missing values are `null`; the viewer shows the latest year at or before the requested one and labels it.
 - Print mode is `?print=1` (`PrintView.svelte`): sized in mm for A4 on screen too, so maps are drawn once at their printed size.
 - `site/lessons/<id>.json` — committed lesson specs; file name must equal `id`. `site/data/` is generated and gitignored.
+- `packages/mcp` — the remote MCP server (Cloudflare Worker) Claude uses to author lessons from claude.ai: lookup tools over the *published* site's catalog (`site.ts`, `lookup.ts`), Wikipedia sources pinned by revision (`wiki.ts`), `validate_lesson`, `preview_lesson` (drafts in KV, served at `/drafts/<id>` for the viewer's `?draft=<id>`). Tools are registered in `server.ts`, which has no Worker imports so `npm run mcp:smoke` can run it in-process against local `site/`. Sign-in is GitHub via `@cloudflare/workers-oauth-provider` (`auth.ts`), limited to `ALLOWED_LOGINS`. The authoring guide Claude reads is `src/guide.md`; keep it in step with the spec. Wrangler needs Node ≥ 22. Setup and deploy: `packages/mcp/README.md`.
 
 Lesson conventions: all user-facing text is `{ it, en? }`; every step cites ≥1 key in `sources`; Wikipedia/Wikidata sources are pinned by `revid`; feature ids follow each dataset's `idScheme` (`ne/admin0` → ADM0_A3, `ne/map_units` → GU_A3 such as ENG/SCT/WLS/NIR, `ne/places` → Wikidata QID). Colours are Okabe–Ito swatch names, never hex. Adding a layer type = schema in `lesson.ts` + checks in `check.ts` + rendering in `MapView.svelte` (+ `legendFor` in `core/legend.ts` if it carries meaning, + `referencedIds` in `core/loader.ts` if it names feature ids). `ne/rivers` ids are name slugs, suffixed with the country's ADM0_A3 only when a name repeats (`severn-gbr`).
 

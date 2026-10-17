@@ -19,6 +19,7 @@
     lang,
     answers,
     printHref,
+    draft = false,
     onnav,
     onanswer,
     onretry,
@@ -31,6 +32,8 @@
     lang: Lang
     answers: (Answer | null)[]
     printHref: string
+    /** An unpublished draft: say so, so nobody mistakes it for the real thing. */
+    draft?: boolean
     onnav: (pageIndex: number) => void
     onanswer: (questionIndex: number, a: Answer) => void
     onretry: () => void
@@ -67,6 +70,7 @@
       <a href="./">{t.allLessons}</a>
       <a href={printHref}>{t.print}</a>
     </div>
+    {#if draft}<p class="draft" title={t.draftNote}>{t.draft}</p>{/if}
     <h1>{pick(lesson.title, lang)}</h1>
     {#if lesson.subtitle}<p class="subtitle">{pick(lesson.subtitle, lang)}</p>{/if}
 
@@ -158,6 +162,16 @@
   }
   .links a {
     color: var(--ink-soft);
+  }
+  .draft {
+    display: inline-block;
+    margin: 0.5rem 0 0;
+    padding: 0 0.5rem;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 700;
   }
   h1 {
     margin: 0.35rem 0 0;

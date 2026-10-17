@@ -9,6 +9,7 @@
 
 import { feature as topoFeature } from 'topojson-client'
 import type { Topology, GeometryCollection } from 'topojson-specification'
+import type { LessonLink } from './url'
 import type { Feature, Geometry } from 'geojson'
 import {
   BASEMAP_DATASET,
@@ -71,13 +72,28 @@ export async function loadCatalog(): Promise<Catalog> {
   }
 }
 
-export async function loadLesson(id: string): Promise<Lesson> {
-  if (!/^[a-z0-9-]+$/.test(id)) throw new LoadError(`«${id}» non è un nome di lezione valido.`)
+/** Where drafts live: the MCP Worker that saved them (see packages/mcp). */
+const DRAFTS_URL = import.meta.env.VITE_DRAFTS_URL
+
+export async function loadLesson(link: LessonLink): Promise<Lesson> {
   let json: unknown
-  try {
-    json = await getJson(`lessons/${id}.json`)
-  } catch {
-    throw new LoadError(`Non trovo la lezione «${id}».`)
+  let id: string
+  if (link.draft !== undefined) {
+    id = link.draft
+    if (!/^[a-z0-9]+$/.test(id) || !DRAFTS_URL) throw new LoadError(`«${id}» non è una bozza valida.`)
+    try {
+      json = await getJson(`${DRAFTS_URL}/drafts/${id}`)
+    } catch {
+      throw new LoadError(`Non trovo la bozza «${id}»: le bozze durano 30 giorni.`)
+    }
+  } else {
+    id = link.lesson
+    if (!/^[a-z0-9-]+$/.test(id)) throw new LoadError(`«${id}» non è un nome di lezione valido.`)
+    try {
+      json = await getJson(`lessons/${id}.json`)
+    } catch {
+      throw new LoadError(`Non trovo la lezione «${id}».`)
+    }
   }
   const parsed = Lesson.safeParse(json)
   if (!parsed.success) {

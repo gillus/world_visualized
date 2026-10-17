@@ -23,18 +23,22 @@ export const Text = z
     en: z.string().min(1).optional(),
   })
   .strict()
+  .meta({ id: 'Text', description: 'User-facing string: Italian required, English optional.' })
 export type Text = z.infer<typeof Text>
 
 const Slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'lowercase-kebab-case')
 const Key = z.string().regex(/^[a-z][a-z0-9_]*$/, 'lowercase identifier')
 
-export const LonLat = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
+export const LonLat = z
+  .tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
+  .meta({ id: 'LonLat', description: '[longitude, latitude] in degrees.' })
 export type LonLat = z.infer<typeof LonLat>
 
 /** [[west, south], [east, north]] in degrees. */
 export const Extent = z
   .tuple([LonLat, LonLat])
   .refine(([[w, s], [e, n]]) => w < e && s < n, 'extent must be [[west, south], [east, north]]')
+  .meta({ id: 'Extent', description: '[[west, south], [east, north]] in degrees.' })
 export type Extent = z.infer<typeof Extent>
 
 export const PROJECTIONS = [
@@ -49,35 +53,35 @@ export const PROJECTIONS = [
 export const Projection = z
   .object({
     type: z.enum(PROJECTIONS).default('auto'),
-    /** Projection centre; defaults to the middle of the map extent. */
-    center: LonLat.optional(),
+    center: LonLat.optional().describe('Projection centre; defaults to the middle of the map extent.'),
   })
   .strict()
 
-/** political: countries with borders; physical: relief tints (plus thin
- *  borders); plain: land and sea only. */
 export const BASEMAPS = ['political', 'physical', 'plain'] as const
-export const Basemap = z.enum(BASEMAPS)
+export const Basemap = z
+  .enum(BASEMAPS)
+  .describe('political: countries with borders; physical: relief tints (plus thin borders); plain: land and sea only.')
 export type Basemap = z.infer<typeof Basemap>
 
 export const MapSetup = z
   .object({
     projection: Projection.default({ type: 'auto' }),
-    /** Everything any step will show; step views zoom within this. */
-    extent: Extent,
+    extent: Extent.describe('Everything any step will show; step views zoom within this.'),
     basemap: Basemap.default('political'),
   })
   .strict()
+  .meta({ id: 'MapSetup' })
 
-/** Dataset IDs look like `ne/admin0` or `ons/itl1@2021`; see data/catalog.json. */
-export const DatasetId = z.string().regex(/^[a-z0-9-]+(\/[a-z0-9_-]+)+(@[a-z0-9._-]+)?$/, 'dataset id')
+export const DatasetId = z
+  .string()
+  .regex(/^[a-z0-9-]+(\/[a-z0-9_-]+)+(@[a-z0-9._-]+)?$/, 'dataset id')
+  .describe('A dataset or series id from the catalog, e.g. `ne/admin0`.')
 
 const Scalar = z.union([z.string(), z.number(), z.boolean()])
-/** Feature filter: property → exact value, any-of list, or numeric range. */
 export const Where = z.record(
   z.string(),
   z.union([Scalar, z.array(Scalar).min(1), z.object({ min: z.number().optional(), max: z.number().optional() }).strict()]),
-)
+).describe('Feature filter: property → exact value, any-of list, or numeric range.')
 export type Where = z.infer<typeof Where>
 
 export const DataRef = z
@@ -86,11 +90,12 @@ export const DataRef = z
     where: Where.optional(),
   })
   .strict()
+  .meta({ id: 'DataRef' })
 export type DataRef = z.infer<typeof DataRef>
 
 /** Okabe–Ito: a categorical palette that stays distinguishable for colour-blind readers. */
 export const SWATCHES = ['orange', 'sky', 'green', 'yellow', 'blue', 'vermillion', 'purple', 'grey'] as const
-export const Swatch = z.enum(SWATCHES)
+export const Swatch = z.enum(SWATCHES).meta({ id: 'Swatch', description: 'Okabe–Ito colour name (colour-blind safe).' })
 export type Swatch = z.infer<typeof Swatch>
 
 const FeatureId = z.string().min(1)
@@ -110,34 +115,32 @@ export const HighlightLayer = z
           .strict(),
       )
       .min(1),
-    /** Write each highlighted feature's own name on the map. */
-    labels: z.boolean().default(false),
+    labels: z.boolean().default(false).describe('Write each highlighted feature\'s own name on the map.'),
   })
   .strict()
+  .meta({ id: 'HighlightLayer' })
 
 export const LabelsLayer = z
   .object({
     type: z.literal('labels'),
     data: Key,
-    /** Which features to label; default: every feature the data handle selects. */
-    ids: z.array(FeatureId).min(1).optional(),
+    ids: z.array(FeatureId).min(1).optional().describe('Which features to label; default: every feature the data handle selects.'),
     marker: z.enum(['capital', 'city', 'none']).optional(),
-    /** Replace a feature's catalog name. */
-    text: z.record(FeatureId, Text).optional(),
+    text: z.record(FeatureId, Text).optional().describe('Replace a feature\'s catalog name.'),
   })
   .strict()
+  .meta({ id: 'LabelsLayer' })
 
 export const NoteLayer = z
   .object({
     type: z.literal('note'),
     at: LonLat,
     text: Text,
-    /** `peak` adds a summit marker (a small triangle) beside the text. */
-    style: z.enum(['water', 'region', 'landform', 'peak', 'plain']).default('plain'),
+    style: z.enum(['water', 'region', 'landform', 'peak', 'plain']).default('plain').describe('`peak` adds a summit marker (a small triangle) beside the text.'),
   })
   .strict()
+  .meta({ id: 'NoteLayer' })
 
-/** "True size" overlay: move a feature (keeping its real size and shape) onto `at`. */
 export const CompareLayer = z
   .object({
     type: z.literal('compare'),
@@ -148,42 +151,49 @@ export const CompareLayer = z
     color: Swatch.default('vermillion'),
   })
   .strict()
+  .meta({
+    id: 'CompareLayer',
+    description: '"True size" overlay: moves a feature, keeping its real size and shape, onto `at`.',
+  })
 
 const Year = z.number().int().min(-5000).max(2100)
 
-/** Areas coloured by a value. `data` must be a series handle (see the catalog's
- *  `series`); its areas come from the series' key dataset. */
 export const ChoroplethLayer = z
   .object({
     type: z.literal('choropleth'),
     data: Key,
-    /** If the series has no value for this year, the latest earlier one is used and shown. */
-    year: Year,
-    /** Legend heading, e.g. "Abitanti per km²". */
-    title: Text,
-    /** Class limits, ascending: [200, 400, 800] makes four classes. Default: five
-     *  classes with about the same number of areas each. */
-    breaks: z.array(z.number()).min(1).max(7).optional(),
+    year: Year.describe('If the series has no value for this year, the latest earlier one is used and shown.'),
+    title: Text.describe('Legend heading, e.g. "Abitanti per km²".'),
+    breaks: z
+      .array(z.number())
+      .min(1)
+      .max(7)
+      .optional()
+      .describe('Class limits, ascending: [200, 400, 800] makes four classes. Default: five classes with about the same number of areas each.'),
   })
   .strict()
+  .meta({
+    id: 'ChoroplethLayer',
+    description: 'Areas coloured by a value. `data` must be a series handle; its areas come from the series\' key dataset.',
+  })
 
-/** Points drawn as circles whose *area* is proportional to a numeric property. */
 export const SymbolsLayer = z
   .object({
     type: z.literal('symbols'),
     data: Key,
-    /** Numeric feature property that sets the circle size, e.g. `pop`. */
-    size: z.string().min(1),
+    size: z.string().min(1).describe('Numeric feature property that sets the circle size, e.g. `pop`.'),
     ids: z.array(FeatureId).min(1).optional(),
     title: Text,
     color: Swatch.default('vermillion'),
-    /** Write each point's name beside its circle. */
-    labels: z.boolean().default(true),
+    labels: z.boolean().default(true).describe('Write each point\'s name beside its circle.'),
     text: z.record(FeatureId, Text).optional(),
   })
   .strict()
+  .meta({
+    id: 'SymbolsLayer',
+    description: 'Points drawn as circles whose area is proportional to a numeric property.',
+  })
 
-/** Lines such as rivers or routes. */
 export const LinesLayer = z
   .object({
     type: z.literal('lines'),
@@ -194,6 +204,10 @@ export const LinesLayer = z
     text: z.record(FeatureId, Text).optional(),
   })
   .strict()
+  .meta({
+    id: 'LinesLayer',
+    description: 'Lines such as rivers or routes.',
+  })
 
 export const Layer = z.discriminatedUnion('type', [
   HighlightLayer,
@@ -213,8 +227,6 @@ export type ChoroplethLayer = z.infer<typeof ChoroplethLayer>
 export type SymbolsLayer = z.infer<typeof SymbolsLayer>
 export type LinesLayer = z.infer<typeof LinesLayer>
 
-/** A bar chart beside the map, from a series handle. If the step also has a
- *  choropleth of the same handle, the bars take its colours. */
 export const Chart = z
   .object({
     type: z.literal('bars'),
@@ -222,78 +234,81 @@ export const Chart = z
     year: Year,
     title: Text,
     sort: z.enum(['desc', 'asc', 'none']).default('desc'),
-    /** Draw the series' aggregate (e.g. the whole country) as a reference line. */
-    reference: z.boolean().default(true),
+    reference: z.boolean().default(true).describe('Draw the series\' aggregate (e.g. the whole country) as a reference line.'),
   })
   .strict()
+  .meta({
+    id: 'Chart',
+    description: 'A bar chart beside the map, from a series handle. If the step also has a choropleth of the same handle, the bars take its colours.',
+  })
 export type Chart = z.infer<typeof Chart>
 
-/** A moment inside a step — e.g. one date in a history sequence. "Next" walks
- *  through a step's frames before moving on. */
 export const Frame = z
   .object({
-    /** Short tab label, e.g. "1707". */
-    label: Text,
+    label: Text.describe('Short tab label, e.g. "1707".'),
     text: Text,
     view: Extent.optional(),
-    /** Drawn on top of the step's own layers. */
-    layers: z.array(Layer).default([]),
+    layers: z.array(Layer).default([]).describe('Drawn on top of the step\'s own layers.'),
     cite: z.array(Key).default([]),
   })
   .strict()
+  .meta({
+    id: 'Frame',
+    description: 'A moment inside a step, e.g. one date in a history sequence. "Next" walks through a step\'s frames before moving on.',
+  })
 export type Frame = z.infer<typeof Frame>
 
 export const Step = z
   .object({
     id: Slug,
     title: Text,
-    /** Paragraphs separated by a blank line; **bold** and *italic* allowed. */
-    text: Text,
-    /** Where the map looks during this step; defaults to the lesson extent. */
-    view: Extent.optional(),
-    /** Overrides `map.basemap` for this step. */
-    basemap: Basemap.optional(),
+    text: Text.describe('Paragraphs separated by a blank line; **bold** and *italic* allowed.'),
+    view: Extent.optional().describe('Where the map looks during this step; defaults to the lesson extent.'),
+    basemap: Basemap.optional().describe('Overrides `map.basemap` for this step.'),
     layers: z.array(Layer).default([]),
     frames: z.array(Frame).min(2).optional(),
     chart: Chart.optional(),
-    /** Keys into `sources`. Every step must say where its claims come from. */
-    cite: z.array(Key).min(1),
+    cite: z.array(Key).min(1).describe('Keys into `sources`. Every step must say where its claims come from.'),
   })
   .strict()
+  .meta({ id: 'Step' })
 export type Step = z.infer<typeof Step>
 
 const QuestionBase = {
   q: Text,
-  /** Shown after answering, right or wrong: why the answer is what it is. */
-  explain: Text,
+  explain: Text.describe('Shown after answering, right or wrong: why the answer is what it is.'),
   cite: z.array(Key).min(1),
   view: Extent.optional(),
   basemap: Basemap.optional(),
 }
 
-/** Multiple choice; the map shows `layers` (or just the basemap). */
 export const ChoiceQuestion = z
   .object({
     type: z.literal('choice'),
     ...QuestionBase,
     choices: z.array(Text).min(2).max(5),
-    /** Index into `choices`. */
-    answer: z.number().int().min(0),
+    answer: z.number().int().min(0).describe('Index into `choices`.'),
     layers: z.array(Layer).default([]),
   })
   .strict()
+  .meta({
+    id: 'ChoiceQuestion',
+    description: 'Multiple choice; the map shows `layers` (or just the basemap).',
+  })
 
-/** "Find it on the map": the student taps one of the candidate areas. */
 export const LocateQuestion = z
   .object({
     type: z.literal('locate'),
     ...QuestionBase,
     data: Key,
-    /** Candidate areas, outlined and tappable. */
-    ids: z.array(FeatureId).min(2).max(12),
+    ids: z.array(FeatureId).min(2).max(12).describe('Candidate areas, outlined and tappable.'),
     answer: FeatureId,
   })
   .strict()
+  .meta({
+    id: 'LocateQuestion',
+    description: '"Find it on the map": the student taps one of the candidate areas.',
+  })
 
 export const Question = z.discriminatedUnion('type', [ChoiceQuestion, LocateQuestion])
 export type Question = z.infer<typeof Question>
@@ -306,8 +321,7 @@ export const Source = z.discriminatedUnion('kind', [
       kind: z.literal('wikipedia'),
       lang: Lang,
       title: z.string().min(1),
-      /** Pinned revision, so the citation never drifts. */
-      revid: z.number().int().positive(),
+      revid: z.number().int().positive().describe('Pinned revision, so the citation never drifts.'),
     })
     .strict(),
   z
@@ -341,15 +355,12 @@ export const Lesson = z
     subtitle: Text.optional(),
     subject: z.enum(SUBJECTS),
     level: z.enum(LEVELS),
-    /** Languages this lesson is complete in. Must include `it`. */
-    langs: z.array(Lang).min(1).default(['it']),
+    langs: z.array(Lang).min(1).default(['it']).describe('Languages this lesson is complete in. Must include `it`.'),
     map: MapSetup,
     data: z.record(Key, DataRef).default({}),
     steps: z.array(Step).min(1),
-    /** "Verifica": a short self-check after the last step. */
-    quiz: z.array(Question).max(10).default([]),
-    /** Honest limits of what the map shows, surfaced to the student. */
-    caveats: z.array(Text).default([]),
+    quiz: z.array(Question).max(10).default([]).describe('"Verifica": a short self-check after the last step.'),
+    caveats: z.array(Text).default([]).describe('Honest limits of what the map shows, surfaced to the student.'),
     sources: z.record(Key, Source),
   })
   .strict()

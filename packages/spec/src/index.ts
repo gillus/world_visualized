@@ -1,6 +1,8 @@
 export * from './lesson'
 export * from './catalog'
 export * from './check'
+export * from './context'
+export * from './jsonSchema'
 
 import type { Lang, Text } from './lesson'
 

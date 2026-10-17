@@ -10,7 +10,7 @@
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { Catalog, DatasetIndex, SeriesFile, validateLesson, hasErrors, type Lesson } from '../src/index'
+import { loadCheckContext, validateLesson, hasErrors, type Lesson } from '../src/index'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 const SITE = join(ROOT, 'site')
@@ -22,29 +22,13 @@ async function readJson(path: string): Promise<unknown> {
 }
 
 async function main() {
-  let catalog: Catalog
+  let ctx: Awaited<ReturnType<typeof loadCheckContext>>
   try {
-    catalog = Catalog.parse(await readJson(join(DATA, 'catalog.json')))
+    ctx = await loadCheckContext((path) => readJson(join(DATA, path)))
   } catch (err) {
-    console.error(`Cannot read ${join(DATA, 'catalog.json')} — run \`npm run atlas:data\` first.\n`, err)
+    console.error(`Cannot read the baked data in ${DATA} — run \`npm run atlas:data\` first.\n`, err)
     process.exit(1)
   }
-
-  const idSets = new Map<string, Set<string>>()
-  for (const ds of catalog.datasets) {
-    const index = DatasetIndex.parse(await readJson(join(DATA, ds.index)))
-    idSets.set(ds.id, new Set(index.map((e) => e.id)))
-  }
-  const yearSets = new Map<string, Set<number>>()
-  for (const s of catalog.series) {
-    const file = SeriesFile.parse(await readJson(join(DATA, s.path)))
-    const years = new Set<number>()
-    for (const byYear of Object.values(file.values)) {
-      for (const [y, v] of Object.entries(byYear)) if (v !== null) years.add(Number(y))
-    }
-    yearSets.set(s.id, years)
-  }
-  const ctx = { catalog, ids: (id: string) => idSets.get(id), years: (id: string) => yearSets.get(id) }
 
   const files = (await readdir(LESSONS)).filter((f) => f.endsWith('.json')).sort()
   const valid: Lesson[] = []

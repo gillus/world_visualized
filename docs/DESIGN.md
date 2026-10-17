@@ -1,6 +1,6 @@
 # Study Atlas — design
 
-Status: v0 · 2026-10-17 · M0 built (see §10)
+Status: v0 · 2026-10-17 · M0 and M1 done, M2 deployed (see §10)
 
 ## 1. What this is
 
@@ -190,29 +190,34 @@ hillshade and rainfall are pre-cut per lesson extent into small PNG/WebP files.
 
 ## 7. MCP server
 
-Hosted on Cloudflare Workers with the Agents SDK `McpAgent`, using
-`workers-oauth-provider` and GitHub OAuth. The write tools check an allowlist of
-two GitHub logins.
+Hosted on Cloudflare Workers (`packages/mcp`): the MCP SDK's stateless
+streamable-HTTP transport (one server per request, no Durable Objects) behind
+`workers-oauth-provider`, which signs people in through GitHub. Only the GitHub
+logins in `ALLOWED_LOGINS` get a token. The Worker reads the catalog, indexes,
+series and lessons from the published site, so it never needs redeploying when
+data changes.
 
 | tool | returns |
 |---|---|
-| `get_authoring_guide()` | how to write a lesson, the JSON Schema, layer cookbook, citation rules, tone |
-| `find_geo(query, at?, extent?)` | matching geo dataset IDs + coverage (not geometry) |
-| `search_series(query, geo?)` | candidate series IDs + units + coverage |
-| `describe_dataset(id)` | full metadata + a few sample values / feature names (for writing `where` filters) |
-| `find_sources(topic, lang)` | Wikipedia passages with `revid` + Wikidata facts, ready to cite |
-| `validate_lesson(spec)` | errors and warnings: schema, unresolved IDs, uncited steps, dates outside coverage, missing `it` strings |
-| `preview_lesson(spec)` | validates, stores the draft (KV, 30-day TTL), returns the viewer link |
-| `publish_lesson(draftId)` | commits to `lessons/`, updates the index, returns the public URL |
+| `get_authoring_guide()` | how to write a lesson, the JSON Schema, layer cookbook, citation rules, tone, published lessons |
+| `find_geo(query, extent?)` | feature ids by place name (it/en, accent-insensitive) + matching datasets |
+| `search_series(query?)` | series ids, units, years, key dataset |
+| `describe_dataset(id, extent?, query?, year?)` | metadata; features with all properties (narrowed) for `where`/`size`; a series' values in one year, for breaks |
+| `find_sources(query, lang)` | Wikipedia hits with lead section, `revid`, ready-made `source` object; disambiguation pages flagged |
+| `read_source(title, lang, revid?)` | one article as plain text, at a pinned revision |
+| `get_lesson(id \| draft)` | a published lesson or a draft, to learn from or revise |
+| `validate_lesson(spec)` | errors and warnings: schema, unresolved IDs, uncited steps, years outside a series, missing translations |
+| `preview_lesson(spec, draft?)` | validates, stores the draft (KV, 30-day TTL, replaceable by its author), returns the viewer link |
+| `publish_lesson(draftId)` | M3: commits to `lessons/`, updates the index, returns the public URL |
 
-Each parent's claude.ai account gets a "Study Atlas" Project. Its instructions
-are one line, "call `get_authoring_guide` first", so the real guidance lives in
-the server and only needs updating in one place.
+The server's MCP `instructions` say "call `get_authoring_guide` first", so no
+claude.ai Project is strictly needed; the real guidance lives in the server
+(`packages/mcp/src/guide.md`) and only needs updating in one place.
 
 ## 8. Repo layout
 
 ```
-packages/spec/      zod schema + types + validator (+ JSON Schema export, M2)
+packages/spec/      zod schema + types + validator + JSON Schema export
 packages/runtime/   the viewer (Svelte 5 + d3-geo)
 packages/pipeline/  data build → site/data/
 packages/mcp/       Cloudflare Worker (M2)
@@ -279,8 +284,15 @@ panel and Italian copy.
   - **Region borders are approximate.** They are dissolved from Natural Earth
     admin-1 rather than taken from ONS boundaries, and density uses those
     polygons' areas. Both are stated as caveats.
-- **M2, Claude authors.** The Worker with read tools plus `validate` and
-  `preview`. Write a *second* lesson end to end from claude.ai, then fix
+- **M2, Claude authors — deployed** at `https://study-atlas-mcp.lucagilli-p.workers.dev/mcp`. `packages/mcp`: the
+  Worker with the nine tools in §7 (everything but `publish`), GitHub sign-in
+  with an allowlist, drafts in KV, and the authoring guide. The viewer opens
+  drafts at `?draft=<id>` (from `VITE_DRAFTS_URL`) with a "Bozza" badge. The
+  spec package now exports the lesson JSON Schema (zod `toJSONSchema`, with
+  `$defs` and field descriptions) and a shared `loadCheckContext`. Deviations:
+  no Agents SDK or Durable Objects (stateless transport is enough); Wikidata
+  facts are not a tool yet (Wikipedia infoboxes cover them). Still to do:
+  write a *second* lesson end to end from claude.ai and fix
   whatever was awkward in the spec or guide.
 - **M3, collection.** `publish`, the index page, English strings, and the world
   population lesson ported.

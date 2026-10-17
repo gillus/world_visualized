@@ -14,7 +14,10 @@
     "atlas:lessons": "npm run lessons -w @atlas/spec",
     "atlas:dev": "npm run dev -w @atlas/runtime",
     "atlas:build": "npm run lessons -w @atlas/spec && npm run build -w @atlas/runtime",
-    "atlas:check": "npm run check -w @atlas/spec && npm run check -w @atlas/pipeline && npm run check -w @atlas/runtime"
+    "atlas:check": "npm run check -w @atlas/spec && npm run check -w @atlas/pipeline && npm run check -w @atlas/runtime && npm run check -w @atlas/mcp",
+    "mcp:dev": "npm run dev -w @atlas/mcp",
+    "mcp:smoke": "npm run smoke -w @atlas/mcp",
+    "mcp:deploy": "npm run deploy -w @atlas/mcp"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.4",

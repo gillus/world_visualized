@@ -1,0 +1,24 @@
+// The Study Atlas MCP Worker. Secrets (not in this file):
+//   npx wrangler secret put GITHUB_CLIENT_ID
+//   npx wrangler secret put GITHUB_CLIENT_SECRET
+// Local development reads them, and overrides PUBLIC_URL, from .dev.vars.
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "study-atlas-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // nodejs_compat: the MCP SDK imports a few Node built-ins.
+  // global_fetch_strictly_public: required to fetch client metadata documents (CIMD).
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  "vars": {
+    "PUBLIC_URL": "https://study-atlas-mcp.lucagilli-p.workers.dev",
+    "SITE_URL": "https://gillus.github.io/world_visualized/",
+    "ALLOWED_LOGINS": "gillus"
+  },
+  "kv_namespaces": [
+    { "binding": "OAUTH_KV", "id": "3763186ca7704d54ab67f9c762f45c12" },
+    { "binding": "DRAFTS", "id": "c944833147af4feebc862c3172c29dba" }
+  ],
+  "observability": { "enabled": true }
+}
